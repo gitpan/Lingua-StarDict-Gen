@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w -s
+
+use Lingua::Stardict::Gen;
+use Biblio::Thesaurus;
+
+our ($name);
+
+my $t=shift or die("usage thesarus2stardict [-name=NNN] thesaurus_file\n");
+
+$name ||= "Thesaurus_$t";
+
+$obj = thesaurusLoad($t);
+
+#Lingua::Stardict::Gen::escreveDic($obj->{$obj->{baselang}}, "$name");
+Lingua::Stardict::Gen::escreveDic(terms2xdxf($obj), "$name");
+
+sub terms2xdxf{
+   my $t=shift;
+   my $o={};
+   my @l = $t->languages();
+  
+   $t->downtr(
+      {-default  => sub { 
+          if(   $t->isLanguage($rel)) 
+               { "\n$rel => \t".join(",\n\t",map{"<dtrn>$_</dtrn>"} @terms)}
+          elsif($t->isExternal($rel))
+               { "\n$rel => \t".join(",\n\t",map{"<abr>$_</abr>"} @terms)}
+          else { "\n$rel => \t".join(",\n\t",map{"<kref>$_</kref>"} @terms)}
+           },
+       -eachTerm => sub { $o->{$term}="<ar>$_</ar>" },
+#      -end      => sub { "Thesaurus :\n $_ \nFIM\n"},
+       -order    => [ @l,"IOF","BT","NT","RT"],
+   });
+   $o;
+}
