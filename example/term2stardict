@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w -s
+
+use Lingua::Stardict::Gen;
+
+my $f=shift or die("usage: $0 [-l=EN] file.term\n");
+our ($l,$i);
+
+my $base =$f;
+$base =~ s!^(.*/)?(.*)\.term$!$2!;
+my $dic=Lingua::Stardict::Gen::carregaDic(
+  { type=>"term",
+    ($l? (l=> $l) : ()),
+  },$f);
+if($i){ Lingua::Stardict::Gen::escreveDic($dic,$base); }
+else  { mkdir "D";
+        Lingua::Stardict::Gen::escreveDic($dic,$base,"D/"); }
+
+
+__END__
+
+=head1 NAME
+
+term2stardict - generates a Stardict dictionary from a term file
+
+=head1 SYNOPSIS
+
+ term2stardict [-l=...] [-i] file.term
+
+=head1 DESCRIPTION
+
+With C<-i> (install) -- output directory is "/usr/share/stardict/dic/".
+
+By default, output is sent to directory D
+
+With C<-l=PT>, language will be "PT"
+
+By default, language is the first language of the first concept.
+
+=head2 term format
+
+Concepts separeted by empty lines
+
+Each line:
+
+ language  termlist (separeated by ";" or ".")
+
+Example:
+
+ %encoding uft8
+
+ EN cat
+ PT gato
+ FR chat
+ DEF ....
+
+ EN house ; building
+ PT casa; apartamento; prédio
+ ...
+
+=head1 AUTHOR
+
+J.Joao Almeida, jj@di.uminho.pt
+
+=head1 SEE ALSO
+
+perl(1).
+
+Lingua::Stardict::Gen
+
+thesaurus2stardict
+
+=cut      
+

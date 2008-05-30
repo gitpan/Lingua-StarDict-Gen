@@ -12,26 +12,44 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.02_1';
+our $VERSION = '0.02_2';
 
-my $nome;
-my %dic;
 
+my $nome; my %dic; 
 sub carregaDic {
-    my $file = shift;
-    my %dic;
-    open IN,"<$file" or die "Can load $file\n";
-    while (<IN>) {
-        if (m!^%enc(oding)? ([a-zA-Z0-9-]+)!) {
-           binmode IN, ":$2";
-           next
-        } elsif (/(.*?)\s*\{\s*(.*?)\s*\}/) {
-          my @palavras = split (';',$2);  
-          $dic{$1} = [@palavras];
+  my %opt =(type=> "default");
+  local $/;
+  if(ref($_[0]) eq "HASH") {%opt = (%opt , %{shift(@_)}) } ;
+
+  if ($opt{type} eq "default"){ $/ = "\n"; }
+  if ($opt{type} eq "term")   { $/ = "";   }
+
+  my $file = shift;
+  my %dic;
+  open IN,"<$file" or die "Can load $file\n";
+  while (<IN>) {
+      chomp;
+      if (m!^%enc(oding)? ([a-zA-Z0-9-]+)!) {
+         binmode IN, ":$2";
+         next
+      } elsif ($opt{type} eq "term") {
+        $opt{lang} = $1 if(!$opt{lang} &&  m((\w+)));
+
+        my $inf={};
+        my @ls = split (/\n(?=\S)/,$_);  
+        for (@ls){
+          if(/(\w+)\s+(.*)/s){ push( @{$inf->{$1}}, split (/\s*[;,]\s*/,$2));} 
         }
-    }
-    close IN;
-    \%dic
+        for(@{$inf->{$opt{lang}}}){ 
+          $dic{$_} = $inf;
+        }
+      } elsif ($opt{type} eq "default" && /(.*?)\s*\{\s*(.*?)\s*\}/) {
+        my @palavras = split (/\s*;\s*/,$2);  
+        $dic{$1} = [@palavras];
+      }
+  }
+  close IN;
+  \%dic
 }
 
 sub mostraDic {
@@ -108,7 +126,7 @@ sub escreveDic {
     print IFO "bookname=$dic\n";
     ## print IFO "dictfilesize=$byteCount\n";
     print IFO "idxfilesize=", tell(IDX),"\n";
-    print IFO "date=", 1900+$t[5], "-" , $t[4]+1 , "-" , $t[3];
+    print IFO "date=", 1900+$t[5], "-" , $t[4]+1 , "-" , $t[3],"\n";
     print IFO "sametypesequence=x\n";
     close(IFO);
     close(DICT);
@@ -141,11 +159,9 @@ sub _dumperpp{
 
 =head1 NAME
 
-Lingua::Stardict::Gen - Stardict dictionary generator
+Lingua::Stardict::Gen - Stardict dictionary generator 
 
 =head1 SYNOPSIS
-
-Este módulo é responsável pela criação de dicionários formatados para o Stardict, a partir de dicionários de entrada simples,do tipo palavra{definição1;definição2..} ou recorrendo à escrita de um dicionário carregado numa hash. 
 
   use Lingua::Stardict::Gen;
 
@@ -157,37 +173,81 @@ Este módulo é responsável pela criação de dicionários formatados para o St
 
   $dic=Lingua::Stardict::Gen::carregaDic("file");
 
+=head1 DESCRIPTION
+
+This module generates stardict dictionaries from HASH references (function C<escreveDic>).
+
+This module also imports a simple dictionary (lines with C<word {def1; def2...}>)(function
+C<carragaDic>).
+
+
 =head1 ABSTRACT
 
-This module generates Stardict dictionaries from perl Hash
+C<Lingua::Stardict::Gen> generates Stardict dictionaries from perl Hash
 
 =head1 FUNCTIONS
 
 =head2 escreveDic
 
-Dado uma hash com o dicionário, o nome do dicionário, e a path onde será colocado, este procedimento é responsável por gerar os ficheiros necessários, de modo a que o dicionário seja compativel com o stardict, e que por ele possa ser carregado.
+  Lingua::Stardict::Gen::escreveDic($dic,"dicname");
+  Lingua::Stardict::Gen::escreveDic($dic,"dicname", dir);
 
-Se não passada  a path como argumento, os ficheiros são criados automáticamente no directóro do stardict, de modo a que o dicionário gerado, fique de imediato disponível.
+Write the necessary files stardict files for dictionary in $dic HASH reference.
+
+C<dir> is the directory where the stardict files are written.
+
+If no C<dir> is provided,  Lingua::Stardict::Gen will try to write it in
+C</usr/share/stardict/dic/...> (the default path for stardict dictionaries).
+In this case the dictionary will be automatically installed.
+
 
 =head2 carregaDic
 
-Esta é a função responsável pelo carregamento de um dicionário (com o formato por nós escolhido) para um hash.
+This function loads a simple dictionary to a HASH reference.
 
-O ficheiro do dicionário é um ficheiro de texto com o seguinte formato
+  $dic=Lingua::Stardict::Gen::carregaDic("file");
 
- palavra{definição1;definição2;..;definição n}
+Where file has the following sintax:
+
+  word{def 1; def 2;... ;def n}
+
+Example (default format):
 
  %encoding utf8
- a{dentro de;em alguém;algum}
+ cat{gato; tareco; animal com quatros patas e mia}
+ dog{...}
+
+Example2 (terminology format):
+
+ %encoding utf8
+
+ EN cat ; feline
+ PT gato ; tareco
+ DEF animal com 4 patas e que mia
+
+ EN house; building; appartment 
+ PT house
+ FR maison
+ ...
+
+In this case we must say the type used:
+
+  $dic=Lingua::Stardict::Gen::carregaDic({type=>"term"},"file");
+
+or even specify the language:
+
+  $dic=Lingua::Stardict::Gen::carregaDic(
+        {type=>"term", lang=>"PT"},"file");
+
+See also the script C<term2stardic> in the destribution.
 
 =head2 mostraDic
 
  mostraDic($hash);
 
-Imprime para o ecrã, o dicionário carregado para a hash;
+Prints to stdio the information in the hash in the form
 
-Imprime sobre a forma de palavra -> definição
-
+ word -> definition
 
 =head1 Authors
 

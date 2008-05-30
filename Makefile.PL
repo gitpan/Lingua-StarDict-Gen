@@ -7,7 +7,8 @@ WriteMakefile(
     AUTHOR              => 'J.Joao <jjoao@cpan.org>',
     VERSION_FROM        => 'lib/Lingua/Stardict/Gen.pm',
     ABSTRACT_FROM       => 'lib/Lingua/Stardict/Gen.pm',
-    EXE_FILES           => [ "example/thesaurus2stardict"],
+    EXE_FILES           => [ "example/thesaurus2stardict",
+                             "example/term2stardict"],
     PL_FILES            => {},
     PREREQ_PM => {
         'Test::More' => 0,
