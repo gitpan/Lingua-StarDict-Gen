@@ -1,7 +1,6 @@
 use Test::More tests => 1;
 
 BEGIN {
-use_ok( 'Lingua::Stardict::Gen' );
+    use_ok( 'Lingua::StarDict::Gen' );
 }
 
-diag( "Testing Lingua::Stardict::Gen $Lingua::Stardict::Gen::VERSION" );

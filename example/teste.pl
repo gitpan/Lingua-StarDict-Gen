@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Lingua::Stardict::Gen;
+use Lingua::StarDict::Gen;
 
-my $dic=Lingua::Stardict::Gen::carregaDic("microEN-PT.dic");
-Lingua::Stardict::Gen::escreveDic($dic,"microEN-PT");
+my $dic=Lingua::StarDict::Gen::carregaDic("microEN-PT.dic");
+Lingua::StarDict::Gen::escreveDic($dic,"microEN-PT");

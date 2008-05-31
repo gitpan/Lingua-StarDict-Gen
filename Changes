@@ -1,8 +1,13 @@
-Revision history for Lingua-Stardict-Gen
+Revision history for Lingua::StarDict::Gen
 
-0.02_1  28 05 2008
-	First CPAN version
+0.02_3 ...
+        - renamed Lingua::Stardict to Lingua::StarDict to match older
+          Lingua::StarDict module already on CPAN;
 
-0.02_2  30 05 2008
-  imports (carregaDic) dictionaries in "term" format
-  New term2stardict script to generate stardict form term files.
+0.02_2  30 May 2008
+	- imports (carregaDic) dictionaries in "term" format;
+	- New term2stardict script to generate stardict form term files.
+
+0.02_1  28 May 2008
+	- First CPAN version;
+

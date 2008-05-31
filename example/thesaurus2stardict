@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w -s
 
-use Lingua::Stardict::Gen;
+use Lingua::StarDict::Gen;
 use Biblio::Thesaurus;
 
 our ($name);
@@ -11,8 +11,8 @@ $name ||= "Thesaurus_$t";
 
 $obj = thesaurusLoad($t);
 
-#Lingua::Stardict::Gen::escreveDic($obj->{$obj->{baselang}}, "$name");
-Lingua::Stardict::Gen::escreveDic(terms2xdxf($obj), "$name");
+#Lingua::StarDict::Gen::escreveDic($obj->{$obj->{baselang}}, "$name");
+Lingua::StarDict::Gen::escreveDic(terms2xdxf($obj), "$name");
 
 sub terms2xdxf{
    my $t=shift;

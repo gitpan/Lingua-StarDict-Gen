@@ -1,4 +1,4 @@
-Lingua-Stardict-Gen
+Lingua-StarDict-Gen
 
 Tool to generate stardict files from a hash table.
 
@@ -22,7 +22,7 @@ COPYRIGHT AND LICENCE
 
 Put the correct copyright and licence information here.
 
-Copyright (C) 2005 J.Joao
+Copyright (C) 2008 J.Joao
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

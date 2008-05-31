@@ -1,26 +1,26 @@
 #!/usr/bin/perl -w -s
 
-use Lingua::Stardict::Gen;
+use Lingua::StarDict::Gen;
 
 my $f=shift or die("usage: $0 [-l=EN] file.term\n");
 our ($l,$i);
 
 my $base =$f;
 $base =~ s!^(.*/)?(.*)\.term$!$2!;
-my $dic=Lingua::Stardict::Gen::carregaDic(
+my $dic=Lingua::StarDict::Gen::carregaDic(
   { type=>"term",
     ($l? (l=> $l) : ()),
   },$f);
-if($i){ Lingua::Stardict::Gen::escreveDic($dic,$base); }
+if($i){ Lingua::StarDict::Gen::escreveDic($dic,$base); }
 else  { mkdir "D";
-        Lingua::Stardict::Gen::escreveDic($dic,$base,"D/"); }
+        Lingua::StarDict::Gen::escreveDic($dic,$base,"D/"); }
 
 
 __END__
 
 =head1 NAME
 
-term2stardict - generates a Stardict dictionary from a term file
+term2stardict - generates a StarDict dictionary from a term file
 
 =head1 SYNOPSIS
 
@@ -65,7 +65,7 @@ J.Joao Almeida, jj@di.uminho.pt
 
 perl(1).
 
-Lingua::Stardict::Gen
+Lingua::StarDict::Gen
 
 thesaurus2stardict
 

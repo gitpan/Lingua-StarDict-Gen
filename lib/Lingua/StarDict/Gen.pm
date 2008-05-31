@@ -1,4 +1,4 @@
-package Lingua::Stardict::Gen;
+package Lingua::StarDict::Gen;
 
 use warnings;
 use strict;
@@ -12,7 +12,7 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.02_2';
+our $VERSION = '0.02_3';
 
 
 my $nome; my %dic; 
@@ -175,7 +175,7 @@ Lingua::Stardict::Gen - Stardict dictionary generator
 
 =head1 DESCRIPTION
 
-This module generates stardict dictionaries from HASH references (function C<escreveDic>).
+This module generates StarDict dictionaries from HASH references (function C<escreveDic>).
 
 This module also imports a simple dictionary (lines with C<word {def1; def2...}>)(function
 C<carragaDic>).
@@ -183,21 +183,21 @@ C<carragaDic>).
 
 =head1 ABSTRACT
 
-C<Lingua::Stardict::Gen> generates Stardict dictionaries from perl Hash
+C<Lingua::StarDict::Gen> generates Stardict dictionaries from perl Hash
 
 =head1 FUNCTIONS
 
 =head2 escreveDic
 
-  Lingua::Stardict::Gen::escreveDic($dic,"dicname");
-  Lingua::Stardict::Gen::escreveDic($dic,"dicname", dir);
+  Lingua::StarDict::Gen::escreveDic($dic,"dicname");
+  Lingua::StarDict::Gen::escreveDic($dic,"dicname", dir);
 
-Write the necessary files stardict files for dictionary in $dic HASH reference.
+Write the necessary files StarDict files for dictionary in $dic HASH reference.
 
-C<dir> is the directory where the stardict files are written.
+C<dir> is the directory where the StarDict files are written.
 
-If no C<dir> is provided,  Lingua::Stardict::Gen will try to write it in
-C</usr/share/stardict/dic/...> (the default path for stardict dictionaries).
+If no C<dir> is provided,  Lingua::StarDict::Gen will try to write it in
+C</usr/share/stardict/dic/...> (the default path for StarDict dictionaries).
 In this case the dictionary will be automatically installed.
 
 
@@ -205,7 +205,7 @@ In this case the dictionary will be automatically installed.
 
 This function loads a simple dictionary to a HASH reference.
 
-  $dic=Lingua::Stardict::Gen::carregaDic("file");
+  $dic=Lingua::StarDict::Gen::carregaDic("file");
 
 Where file has the following sintax:
 
@@ -232,11 +232,11 @@ Example2 (terminology format):
 
 In this case we must say the type used:
 
-  $dic=Lingua::Stardict::Gen::carregaDic({type=>"term"},"file");
+  $dic=Lingua::StarDict::Gen::carregaDic({type=>"term"},"file");
 
 or even specify the language:
 
-  $dic=Lingua::Stardict::Gen::carregaDic(
+  $dic=Lingua::StarDict::Gen::carregaDic(
         {type=>"term", lang=>"PT"},"file");
 
 See also the script C<term2stardic> in the destribution.
@@ -275,4 +275,4 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of Lingua::Stardict::Gen
+1; # End of Lingua::StarDict::Gen
