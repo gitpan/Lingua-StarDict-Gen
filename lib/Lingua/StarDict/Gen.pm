@@ -12,7 +12,7 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.02_3';
+our $VERSION = '0.03';
 
 
 my $nome; my %dic; 

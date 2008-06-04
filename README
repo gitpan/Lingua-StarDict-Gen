@@ -6,7 +6,10 @@ Tool to generate stardict files from a hash table.
           word2 => ...
         }
 
- escreveDic($dic, "DicName");
+ escreveDic($dic, "DicName")
+
+A tool (term2stardict) is provided to imports certain formats of 
+  terminologies
 
 INSTALLATION
 

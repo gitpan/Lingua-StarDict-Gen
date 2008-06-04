@@ -1,5 +1,9 @@
 Revision history for Lingua::StarDict::Gen
 
+0.03    0 Jun 2008
+        - First CPAN version without "_"
+        - Added term2stardict
+
 0.02_3 ...
         - renamed Lingua::Stardict to Lingua::StarDict to match older
           Lingua::StarDict module already on CPAN;
