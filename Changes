@@ -1,6 +1,9 @@
 Revision history for Lingua::StarDict::Gen
 
-0.03    0 Jun 2008
+0.04    20 Jun 2008
+        - compatibility with 5.10 (I hope)
+
+0.03    10 Jun 2008
         - First CPAN version without "_"
         - Added term2stardict
 

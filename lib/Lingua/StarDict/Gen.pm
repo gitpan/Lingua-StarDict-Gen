@@ -12,7 +12,7 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 my $nome; my %dic; 
@@ -73,10 +73,10 @@ sub escreveDic {
     }
     chdir($dirpath.$dic);
 
-    open DICT,">$dic.dict" or die ("Cant create $dic.dict\n");
-    binmode(DICT,":utf8");
-    open IDX,">$dic.idx"   or die ("Cant create $dic.idx\n");
-    open IFO,">$dic.ifo"   or die ("Cant create $dic.ifo\n");
+    open DICT,">:utf8","$dic.dict" or die ("Cant create $dic.dict\n");
+    open IDX, ">:raw" ,"$dic.idx"  or die ("Cant create $dic.idx\n");
+    open IFO, ">"     ,"$dic.ifo"  or die ("Cant create $dic.ifo\n");
+
     my @keys =();
     { no locale;
       @keys = sort (keys %{$hash});
@@ -85,10 +85,10 @@ sub escreveDic {
     for my $chave (@keys) {
         my $posInicial = $byteCount;
         if (utf8::is_utf8($chave)) {
-          print IDX pack('a*x',$chave);
+          use bytes; print IDX pack('a*x',$chave);
         } else {
           my $string = encode_utf8($chave);
-          print IDX pack('a*x',$string);
+          use bytes; print IDX pack('a*x',$string);
         }
         print IDX pack('N',$byteCount);
         ###  print "$chave \@ $byteCount\n";
@@ -183,7 +183,11 @@ C<carragaDic>).
 
 =head1 ABSTRACT
 
-C<Lingua::StarDict::Gen> generates Stardict dictionaries from perl Hash
+C<Lingua::StarDict::Gen> is a perl module for building Stardict 
+dictionaries from perl Hash.
+
+Also included perl script for making stardicts form term-format and
+thesaurus-format.
 
 =head1 FUNCTIONS
 
