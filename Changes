@@ -1,7 +1,11 @@
 Revision history for Lingua::StarDict::Gen
 
+0.05    25 Jun 2008
+	- .ido and .dict with correct linefeed (no carriage return);
+
 0.04    20 Jun 2008
         - compatibility with 5.10 (I hope)
+	- IDX with correct encoding
 
 0.03    10 Jun 2008
         - First CPAN version without "_"

@@ -12,7 +12,7 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 my $nome; my %dic; 
@@ -73,9 +73,9 @@ sub escreveDic {
     }
     chdir($dirpath.$dic);
 
-    open DICT,">:utf8","$dic.dict" or die ("Cant create $dic.dict\n");
-    open IDX, ">:raw" ,"$dic.idx"  or die ("Cant create $dic.idx\n");
-    open IFO, ">"     ,"$dic.ifo"  or die ("Cant create $dic.ifo\n");
+    open DICT,">:raw:utf8","$dic.dict" or die ("Cant create $dic.dict\n");
+    open IDX, ">:raw"     ,"$dic.idx"  or die ("Cant create $dic.idx\n");
+    open IFO, ">:raw"     ,"$dic.ifo"  or die ("Cant create $dic.ifo\n");
 
     my @keys =();
     { no locale;
