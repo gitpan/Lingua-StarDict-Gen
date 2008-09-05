@@ -3,7 +3,9 @@
 use Lingua::StarDict::Gen;
 use Biblio::Thesaurus;
 
-our ($name);
+our ($name,$dir);
+
+$dir ||= "D/";
 
 my $t=shift or die("usage thesarus2stardict [-name=NNN] thesaurus_file\n");
 
@@ -11,8 +13,9 @@ $name ||= "Thesaurus_$t";
 
 $obj = thesaurusLoad($t);
 
-#Lingua::StarDict::Gen::escreveDic($obj->{$obj->{baselang}}, "$name");
-Lingua::StarDict::Gen::escreveDic(terms2xdxf($obj), "$name");
+#Lingua::StarDict::Gen::escreveDic($obj->{$obj->{baselang}}, $name);
+mkdir($dir);
+Lingua::StarDict::Gen::escreveDic(terms2xdxf($obj), $name, $dir);
 
 sub terms2xdxf{
    my $t=shift;
@@ -29,7 +32,7 @@ sub terms2xdxf{
            },
        -eachTerm => sub { $o->{$term}="<ar>$_</ar>" },
 #      -end      => sub { "Thesaurus :\n $_ \nFIM\n"},
-       -order    => [ @l,"IOF","BT","NT","RT"],
+       -order    => ["DEF", "DOM", @l,"IOF","BT","NT","RT"],
    });
    $o;
 }

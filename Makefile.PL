@@ -6,7 +6,6 @@ WriteMakefile(
     NAME                => 'Lingua::StarDict::Gen',
     AUTHOR              => 'J.Joao <jjoao@cpan.org>',
     VERSION_FROM        => 'lib/Lingua/StarDict/Gen.pm',
-    ABSTRACT_FROM       => 'lib/Lingua/StarDict/Gen.pm',
     EXE_FILES           => [ "example/thesaurus2stardict",
                              "example/term2stardict"],
     PL_FILES            => {},

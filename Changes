@@ -1,5 +1,11 @@
 Revision history for Lingua::StarDict::Gen
 
+0.06    5 Sep 2008
+	- improved term2stardict
+	- improved thesaurus2stardict
+	- new English API
+
+
 0.05    25 Jun 2008
 	- .ido and .dict with correct linefeed (no carriage return);
 

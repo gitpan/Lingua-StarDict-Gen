@@ -12,11 +12,14 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 
 my $nome; my %dic; 
-sub carregaDic {
+
+sub carregaDic { &loadDict; }
+
+sub loadDict {
   my %opt =(type=> "default");
   local $/;
   if(ref($_[0]) eq "HASH") {%opt = (%opt , %{shift(@_)}) } ;
@@ -52,7 +55,9 @@ sub carregaDic {
   \%dic
 }
 
-sub mostraDic {
+sub mostraDic { &showDict; }
+
+sub showDict {
     $nome = shift;
     %dic = %{$nome};
     for my $chave (sort (keys %dic)) {
@@ -62,10 +67,13 @@ sub mostraDic {
     }
 }
 
-sub escreveDic {
+sub escreveDic { &writeDict; }
+
+sub writeDict {
     my $hash= shift;
     my $dic = shift;
     my $dirpath=shift;
+		$dirpath ||= "";
     $dirpath ||= "/usr/share/stardict/dic/" if -d "/usr/share/stardict/dic/";
     $dirpath ||= "/usr/local/share/stardict/dic/" if -d "/usr/local/share/stardict/dic/";
     unless(-d "$dirpath$dic"){
@@ -193,8 +201,10 @@ thesaurus-format.
 
 =head2 escreveDic
 
-  Lingua::StarDict::Gen::escreveDic($dic,"dicname");
-  Lingua::StarDict::Gen::escreveDic($dic,"dicname", dir);
+=head2 writeDict
+
+  Lingua::StarDict::Gen::writeDict($dic,"dicname");
+  Lingua::StarDict::Gen::writeDict($dic,"dicname", dir);
 
 Write the necessary files StarDict files for dictionary in $dic HASH reference.
 
@@ -204,12 +214,13 @@ If no C<dir> is provided,  Lingua::StarDict::Gen will try to write it in
 C</usr/share/stardict/dic/...> (the default path for StarDict dictionaries).
 In this case the dictionary will be automatically installed.
 
-
 =head2 carregaDic
+
+=head2 loadDict
 
 This function loads a simple dictionary to a HASH reference.
 
-  $dic=Lingua::StarDict::Gen::carregaDic("file");
+  $dic=Lingua::StarDict::Gen::loadDict("file");
 
 Where file has the following sintax:
 
@@ -236,18 +247,20 @@ Example2 (terminology format):
 
 In this case we must say the type used:
 
-  $dic=Lingua::StarDict::Gen::carregaDic({type=>"term"},"file");
+  $dic=Lingua::StarDict::Gen::loadDict({type=>"term"},"file");
 
 or even specify the language:
 
-  $dic=Lingua::StarDict::Gen::carregaDic(
+  $dic=Lingua::StarDict::Gen::loadDict(
         {type=>"term", lang=>"PT"},"file");
 
 See also the script C<term2stardic> in the destribution.
 
 =head2 mostraDic
 
- mostraDic($hash);
+=head2 showDict
+
+ showDict($hash);
 
 Prints to stdio the information in the hash in the form
 
@@ -268,7 +281,6 @@ Paulo Soares
 stardict
 
 perl
-
 
 =head1 COPYRIGHT & LICENSE
 
