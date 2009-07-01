@@ -13,9 +13,9 @@ $name ||= "Thesaurus_$t";
 
 $obj = thesaurusLoad($t);
 
-#Lingua::StarDict::Gen::escreveDic($obj->{$obj->{baselang}}, $name);
+#Lingua::StarDict::Gen::writeDict($obj->{$obj->{baselang}}, $name);
 mkdir($dir);
-Lingua::StarDict::Gen::escreveDic(terms2xdxf($obj), $name, $dir);
+Lingua::StarDict::Gen::writeDict(terms2xdxf($obj), $name, $dir);
 
 sub terms2xdxf{
    my $t=shift;

@@ -6,15 +6,17 @@ my $f=shift or die("usage: $0 [-l=EN] file.term\n");
 our ($l,$i);
 
 my $base =$f;
+my $s="/";
 $base =~ s!^(.*/)?(.*)\.term$!$2!;
-my $dic=Lingua::StarDict::Gen::carregaDic(
+my $dic=Lingua::StarDict::Gen::loadDict(
   { type=>"term",
     ($l? (lang=> $l) : ()),
   },$f);
 
-if($i){ Lingua::StarDict::Gen::escreveDic($dic,$base); }
+if($i){ Lingua::StarDict::Gen::writeDict($dic,$base); }
 else  { mkdir "D";
-        Lingua::StarDict::Gen::escreveDic($dic,$base,"D/"); }
+        if ( $^O eq "MSWin32") {$s="\\"} 
+        Lingua::StarDict::Gen::writeDict($dic,$base,"D$s"); }
 
 
 __END__
@@ -29,7 +31,8 @@ term2stardict - generates a StarDict dictionary from a term file
 
 =head1 DESCRIPTION
 
-With C<-i> (install) -- output directory is "/usr/share/stardict/dic/".
+With C<-i> (install) -- output directory is "/usr/share/stardict/dic/",
+"c:\ProgramFiles\stardict\dic" or similar.
 
 By default, output is sent to directory D
 

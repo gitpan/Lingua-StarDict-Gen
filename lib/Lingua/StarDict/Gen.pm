@@ -12,7 +12,7 @@ use utf8;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 
 my $nome; my %dic; 
@@ -32,7 +32,7 @@ sub loadDict {
   open IN,"<$file" or die "Can load $file\n";
   while (<IN>) {
       chomp;
-      if (m!^%enc(oding)? ([a-zA-Z0-9-]+)!) {
+      if (m!^%enc(oding)?\s+([a-zA-Z0-9-]+)!) {
          binmode IN, ":$2";
          next
       } elsif ($opt{type} eq "term") {
@@ -69,21 +69,28 @@ sub showDict {
 
 sub escreveDic { &writeDict; }
 
+
 sub writeDict {
     my $hash= shift;
     my $dic = shift;
     my $dirpath=shift;
-		$dirpath ||= "";
-    $dirpath ||= "/usr/share/stardict/dic/" if -d "/usr/share/stardict/dic/";
+    my $d ; 
+    my $s='/';
+    if(    $^O eq "linux")  {$d= "/usr/share/stardict/dic/" }
+    elsif( $^O eq "darwin") {$d= "/opt/gtk/share/stardict/dic/" }
+    elsif( $^O eq "MSWin32"){$d= "$ENV{ProgramFiles}\\stardict\\dic\\";$s="\\"}
+    $dirpath ||= "";
+    $dirpath ||= $d if -d $d;
     $dirpath ||= "/usr/local/share/stardict/dic/" if -d "/usr/local/share/stardict/dic/";
     unless(-d "$dirpath$dic"){
       mkdir($dirpath.$dic,0755) or die "Cant create directory $dirpath$dic\n";
     }
-    chdir($dirpath.$dic);
+    ## chdir($dirpath.$dic);
+    my $finalpath= $dirpath.$dic;
 
-    open DICT,">:raw:utf8","$dic.dict" or die ("Cant create $dic.dict\n");
-    open IDX, ">:raw"     ,"$dic.idx"  or die ("Cant create $dic.idx\n");
-    open IFO, ">:raw"     ,"$dic.ifo"  or die ("Cant create $dic.ifo\n");
+    open DICT,">:raw:utf8","$finalpath$s$dic.dict" or die ("Cant create $dic.dict\n");
+    open IDX, ">:raw"     ,"$finalpath$s$dic.idx"  or die ("Cant create $dic.idx\n");
+    open IFO, ">:raw"     ,"$finalpath$s$dic.ifo"  or die ("Cant create $dic.ifo\n");
 
     my @keys =();
     { no locale;
@@ -135,7 +142,8 @@ sub writeDict {
     ## print IFO "dictfilesize=$byteCount\n";
     print IFO "idxfilesize=", tell(IDX),"\n";
     print IFO "date=", 1900+$t[5], "-" , $t[4]+1 , "-" , $t[3],"\n";
-    print IFO "sametypesequence=x\n";
+    if($^O eq "MSWin32"){ print IFO "sametypesequence=m\n";}
+    else                { print IFO "sametypesequence=x\n";}
     close(IFO);
     close(DICT);
     close(IDX);
@@ -167,19 +175,21 @@ sub _dumperpp{
 
 =head1 NAME
 
-Lingua::Stardict::Gen - Stardict dictionary generator 
+Lingua::StarDict::Gen - Stardict dictionary generator 
 
 =head1 SYNOPSIS
 
-  use Lingua::Stardict::Gen;
+  use Lingua::StarDict::Gen;
 
   $dic = { word1 => ...
            word2 => ...
          }
 
-  Lingua::Stardict::Gen::escreveDic($dic,"dicname" [,"dirpath"]);
+  Lingua::StarDict::Gen::writeDic($dic,"dicname" [,"dirpath"]);
+  Lingua::StarDict::Gen::escreveDic($dic,"dicname" [,"dirpath"]);
 
-  $dic=Lingua::Stardict::Gen::carregaDic("file");
+  $dic=Lingua::StarDict::Gen::loadDic("file");
+  $dic=Lingua::StarDict::Gen::carregaDic("file");
 
 =head1 DESCRIPTION
 
@@ -199,9 +209,9 @@ thesaurus-format.
 
 =head1 FUNCTIONS
 
-=head2 escreveDic
-
 =head2 writeDict
+
+=head2 escreveDic
 
   Lingua::StarDict::Gen::writeDict($dic,"dicname");
   Lingua::StarDict::Gen::writeDict($dic,"dicname", dir);
@@ -214,9 +224,10 @@ If no C<dir> is provided,  Lingua::StarDict::Gen will try to write it in
 C</usr/share/stardict/dic/...> (the default path for StarDict dictionaries).
 In this case the dictionary will be automatically installed.
 
-=head2 carregaDic
 
 =head2 loadDict
+
+=head2 carregaDic
 
 This function loads a simple dictionary to a HASH reference.
 
