@@ -6,13 +6,14 @@ use Data::Dumper;
 use locale;
 use Encode;
 use utf8;
+use File::Spec::Functions;
 #use POSIX qw(locale_h);
 #setlocale(LC_ALL,"C");
 
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 
 my $nome; my %dic; 
@@ -82,11 +83,11 @@ sub writeDict {
     $dirpath ||= "";
     $dirpath ||= $d if -d $d;
     $dirpath ||= "/usr/local/share/stardict/dic/" if -d "/usr/local/share/stardict/dic/";
-    unless(-d "$dirpath$dic"){
-      mkdir($dirpath.$dic,0755) or die "Cant create directory $dirpath$dic\n";
+    unless(-d catfile($dirpath,$dic)){
+      mkdir(catfile($dirpath,$dic),0755) or die "Cant create directory $dirpath$dic\n";
     }
     ## chdir($dirpath.$dic);
-    my $finalpath= $dirpath.$dic;
+    my $finalpath= catfile($dirpath,$dic);
 
     open DICT,">:raw:utf8","$finalpath$s$dic.dict" or die ("Cant create $dic.dict\n");
     open IDX, ">:raw"     ,"$finalpath$s$dic.idx"  or die ("Cant create $dic.idx\n");
@@ -185,10 +186,10 @@ Lingua::StarDict::Gen - Stardict dictionary generator
            word2 => ...
          }
 
-  Lingua::StarDict::Gen::writeDic($dic,"dicname" [,"dirpath"]);
+  Lingua::StarDict::Gen::writeDict($dic,"dicname" [,"dirpath"]);
   Lingua::StarDict::Gen::escreveDic($dic,"dicname" [,"dirpath"]);
 
-  $dic=Lingua::StarDict::Gen::loadDic("file");
+  $dic=Lingua::StarDict::Gen::loadDict("file");
   $dic=Lingua::StarDict::Gen::carregaDic("file");
 
 =head1 DESCRIPTION
