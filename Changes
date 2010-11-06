@@ -1,4 +1,10 @@
 Revision history for Lingua::StarDict::Gen
+0.09    3 Nov 2010
+    - correction of a bug that caused term losts.
+      This bug was related to term order (sort alg) in the 
+      index file
+      Thanks to Nicolav Shaplov
+
 
 0.08    22 Dec 2009
 	- output directory no longer hardcoded

@@ -13,8 +13,7 @@ use File::Spec::Functions;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.08';
-
+our $VERSION = '0.09';
 
 my $nome; my %dic; 
 
@@ -75,7 +74,7 @@ sub writeDict {
     my $hash= shift;
     my $dic = shift;
     my $dirpath=shift;
-    my $d ; 
+    my $d ;  ## install dic directory
     my $s='/';
     if(    $^O eq "linux")  {$d= "/usr/share/stardict/dic/" }
     elsif( $^O eq "darwin") {$d= "/opt/gtk/share/stardict/dic/" }
@@ -83,38 +82,37 @@ sub writeDict {
     $dirpath ||= "";
     $dirpath ||= $d if -d $d;
     $dirpath ||= "/usr/local/share/stardict/dic/" if -d "/usr/local/share/stardict/dic/";
-    unless(-d catfile($dirpath,$dic)){
-      mkdir(catfile($dirpath,$dic),0755) or die "Cant create directory $dirpath$dic\n";
-    }
-    ## chdir($dirpath.$dic);
     my $finalpath= catfile($dirpath,$dic);
-
-    open DICT,">:raw:utf8","$finalpath$s$dic.dict" or die ("Cant create $dic.dict\n");
-    open IDX, ">:raw"     ,"$finalpath$s$dic.idx"  or die ("Cant create $dic.idx\n");
-    open IFO, ">:raw"     ,"$finalpath$s$dic.ifo"  or die ("Cant create $dic.ifo\n");
-
-    my @keys =();
-    { no locale;
-      @keys = sort (keys %{$hash});
+    unless(-d $finalpath){
+      mkdir($finalpath,0755) or die "Cant create directory $finalpath\n";
     }
+    my $finalpath2= catfile($finalpath,$dic);
+
+    open DICT,">:raw:utf8","$finalpath2.dict" or die ("Cant create $dic.dict\n");
+    open IDX, ">:raw"     ,"$finalpath2.idx"  or die ("Cant create $dic.idx\n");
+    open IFO, ">:raw"     ,"$finalpath2.ifo"  or die ("Cant create $dic.ifo\n");
+
     my $byteCount = 0;
+    my @keys =();
+### { no locale; @keys = sort (keys %{$hash}); }
+    @keys = sort {_stardict_strcmp($a,$b)} (keys %{$hash});                                   
     for my $chave (@keys) {
         my $posInicial = $byteCount;
-        if (utf8::is_utf8($chave)) {
-          use bytes; print IDX pack('a*x',$chave);
-        } else {
-          my $string = encode_utf8($chave);
-          use bytes; print IDX pack('a*x',$string);
-        }
+        my $word8 = $chave;
+        $word8 = encode_utf8($word8) unless utf8::is_utf8($chave);
+        { use bytes; print IDX pack('a*x',$word8); }
+
         print IDX pack('N',$byteCount);
         ###  print "$chave \@ $byteCount\n";
-        print DICT "$chave\n";
-        $byteCount += (_len2($chave) + 1);
+        print DICT "$word8\n";
+        $byteCount += (bytes::length($word8) + 1);
 
         if(ref($hash->{$chave}) eq "ARRAY"){
            for (@{$hash->{$chave}}) {
-              print DICT "\t$_\n";
-              $byteCount += (_len2($_) + 2);
+              my $b=$_;
+              if(ref $_){ $b= _dumperpp(Dumper($b)); }
+              print DICT "\t$b\n";
+              $byteCount += (_len2($b) + 2);
            } }
         elsif(ref($hash->{$chave})) {
            my $a= _dumperpp(Dumper($hash->{$chave}));
@@ -124,7 +122,7 @@ sub writeDict {
         else {
            my $a=$hash->{$chave};
            $a =~ s/\s*$//;
-	   $a =~ s/\n/\n\t/g;
+           $a =~ s/\n/\n\t/g;
            ###  print "DEBUG: $chave\n\t$a\n";
            print DICT "\t$a\n";
            $byteCount += (_len2($a) +2); 
@@ -153,7 +151,7 @@ sub writeDict {
 sub _len2{ 
    my $string = shift;
    $string = encode_utf8($string) unless utf8::is_utf8($string);
-   do { use bytes; length($string) } 
+   bytes::length($string) ;
 }
 #sub len2{ do { length($_[0]) } }
 
@@ -170,6 +168,51 @@ sub _dumperpp{
    $a =~ s/"(.*?)"/$1/g;
    $a;
 }
+
+sub _g_ascii_strcasecmp { # pure perl re-implementation of g_ascii_strcasecmp
+  my $s1 = shift;
+  my $s2 = shift;
+  no locale;
+  $s1=~s/([A-Z])/lc($1)/ge;
+  $s2=~s/([A-Z])/lc($1)/ge;
+  while (length($s1) || length($s2))
+  {
+    return -1 if length($s1)==0;
+    return 1 if length($s2)==0;
+    $s1=~s/^(.)//;
+    my $c1 = $1;
+    $s2=~s/^(.)//;
+    my $c2 = $1;
+    return ord($c1)-ord($c2) if $c1 ne $c2;
+  }
+  return 0;
+}
+
+sub _strcmp { # pure perl re-implementation of strcmp
+  my $s1 = shift;
+  my $s2 = shift;
+  no locale;
+  while (length($s1) || length($s2)) {
+    return -1 if length($s1)==0;
+    return 1 if length($s2)==0;
+    $s1=~s/^(.)//;
+    my $c1 = $1;
+    $s2=~s/^(.)//;
+    my $c2 = $1;
+    return ord($c1)-ord($c2) if $c1 ne $c2;
+  }
+  return 0;
+}
+
+sub _stardict_strcmp { # pure perl re-implementation of stardict_strcmp
+  my $s1 = shift;
+  my $s2 = shift;
+  
+  my $i = _g_ascii_strcasecmp($s1, $s2);
+  return $i if $i;
+  return _strcmp($s1,$s2);
+}
+
 
 1;
 
@@ -288,11 +331,15 @@ Paulo Silva
 
 Paulo Soares
 
+Nicolav Shaplov
+
 =head1 SEE ALSO
 
 stardict
 
 perl
+
+wiktionary-export/trunk/StarDict
 
 =head1 COPYRIGHT & LICENSE
 
