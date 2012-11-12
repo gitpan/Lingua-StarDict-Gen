@@ -21,6 +21,8 @@ else  { mkdir "D";
 
 __END__
 
+=encoding utf8
+
 =head1 NAME
 
 term2stardict - generates a StarDict dictionary from a term file

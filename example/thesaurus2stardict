@@ -36,3 +36,30 @@ sub terms2xdxf{
    });
    $o;
 }
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+theseaurus2stardict - generates Stardict files from thesuaurus
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=head2 EXPORT
+
+=head1 AUTHOR
+
+J.Joao Almeida, jj@di.uminho.pt
+
+=head1 SEE ALSO
+
+perl(1).
+
+Bibio::Thesaurus(3pm)
+
+=cut      
+

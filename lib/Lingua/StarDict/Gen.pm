@@ -13,7 +13,7 @@ use File::Spec::Functions;
 $Data::Dumper::Indent=1;
 $Data::Dumper::Terse=1;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 my $nome; my %dic; 
 
@@ -216,6 +216,7 @@ sub _stardict_strcmp { # pure perl re-implementation of stardict_strcmp
 
 1;
 
+=encoding utf8
 
 =head1 NAME
 
